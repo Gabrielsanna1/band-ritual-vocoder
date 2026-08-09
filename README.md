@@ -1,30 +1,66 @@
 # Band Ritual — First Prototype (reference only)
 
-This repo is a **frozen snapshot of the first Band Ritual prototype**, built solo over ~3 months
-(March–June 2026). It exists so it can be **read and interrogated**, not built on.
+> ## 👋 Gabriel — start here
+>
+> **What this is:** the first version of Band Ritual, which I built alone between March and June 2026.
+> It works, and it hit its goal. It is also messy, because I wrote it fast while figuring things out.
+>
+> **What this is NOT:** the thing we're building. **We are rebuilding from scratch, step by step, in the
+> other repo.** Nothing here should be copy-pasted forward. This repo exists purely so you can *read* it
+> and understand what I already learned, so we don't spend months relearning it.
+>
+> **Do these three things, in order:**
+>
+> 1. **Read [`docs/CONTEXT.md`](docs/CONTEXT.md)** — 5 minutes. It's the whole project distilled: what the
+>    plugin does, the algorithm I reverse-engineered out of Ableton, the exact measured constants, and a
+>    table of everything I tried that **didn't** work.
+> 2. **Skim the [trust table](#trust-table--read-this-before-believing-any-file) below** before opening any
+>    C++. Roughly half the files in `Source/` are dead experiments I never deleted. The table says which is which.
+> 3. **Clone it and point an AI agent at it** (see below). That's the fastest way in.
+>
+> **The notes matter more than the code.** `docs/` has all 59 development notes I wrote while building this.
+> The code only tells you *what* I did; the notes tell you *why*, and what I ruled out. That second part is
+> the expensive part — it's ~3 months of measurements.
+>
+> Anything unclear, ask me. — Enrico
 
-The actual rebuild happens in the *other* repo, from scratch, step by step. Nothing here is
-meant to be copied forward as-is. The prototype was written fast, to answer one question:
-**how does Ableton Live's Vocoder actually work?** It answered it — and accumulated a lot of
-mess along the way.
+---
 
-**The most valuable thing in this repo is `docs/`, not `Source/`.** The code is the residue of
-the experiments; the notes are the experiments. Read `docs/CONTEXT.md` first.
+## What the project actually was
+
+Band Ritual is a **vocoder plugin** (JUCE, VST3/AU). The goal wasn't "make a vocoder" — it was to
+**reverse-engineer Ableton Live's stock Vocoder** until the output matched measurably, then build a
+plugin around that engine with its own character mode and GUI.
+
+"Matched measurably" means a number: **cosine similarity** between my output and Ableton's, on the same
+input and settings. It went from 0.45 → **0.927 average across 5 inputs**. That metric drove every
+decision for three months. Full story in [`docs/CONTEXT.md`](docs/CONTEXT.md).
 
 ---
 
 ## How to use this with an AI agent
 
-Clone it, open a terminal in the folder, and run your agent (Claude Code, Cursor, whatever) inside it.
-Then ask things like:
+```bash
+gh repo clone eqenrico-hub/band-ritual-prototype
+cd band-ritual-prototype
+claude          # or cursor, or whatever you use
+```
 
-- *"Why is the carrier filter 4 cascaded stages instead of one?"*
+Then ask it things like:
+
+- *"Read docs/CONTEXT.md, then explain how the carrier filter works and why it's 4 cascaded stages."*
 - *"What was tried for the envelope follower, and what won?"*
-- *"Show me every dead end that was tested and rejected."*
-- *"How does depth >100% behave, and where did that formula come from?"*
+- *"List every dead end that was tested and rejected, so I don't repeat them."*
+- *"How does depth above 100% behave, and where did that formula come from?"*
+- *"Walk me through PluginProcessor.cpp — what are the main stages of the audio path?"*
 
-Because the code and the reasoning live in the same repo, the agent can answer **why**, not just **what**.
-Code alone can't do that.
+Because the code and the reasoning sit in the same repo, the agent can answer **why**, not just **what**.
+Code on its own can't do that.
+
+⚠️ **One warning when using an agent here:** the notes were written over 3 months and contradict each
+other, because my understanding kept changing. **Later notes beat earlier ones**, and anything measured
+before `docs/dsp/Band Ritual - WAV Clipping Bug Discovery 2026-04-11.md` was measured on clipped audio
+and is simply wrong. Tell your agent this, or it will quote outdated numbers with total confidence.
 
 ---
 
