@@ -2,7 +2,7 @@
 
 > ## 👋 Gabriel — start here
 >
-> **What this is:** the first version of Band Ritual, which I built alone between March and June 2026.
+> **What this is:** the first version of Band Ritual, which I built between March and June 2026.
 > It works, and it hit its goal. It is also messy, because I wrote it fast while figuring things out.
 >
 > **What this is NOT:** the thing we're building. **We are rebuilding from scratch, step by step, in the
