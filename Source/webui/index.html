@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Band Ritual</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="plugin-container">
+        <!-- Top Header Bar -->
+        <header class="header-bar">
+            <div class="header-left">
+                <label class="bypass-toggle">
+                    <input type="checkbox" id="bypass">
+                    <span>Byp...</span>
+                </label>
+            </div>
+            <h1 class="plugin-title">BAND RITUAL</h1>
+            <div class="header-right">
+                <select id="presetSelect" class="preset-dropdown">
+                    <option>Select Preset...</option>
+                </select>
+                <button class="header-btn">Save</button>
+                <button class="header-btn close-btn">X</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Panel -->
+            <div class="left-panel">
+                <div class="mode-section">
+                    <label class="section-label">MODE</label>
+                    <select id="carrierMode" class="mode-dropdown">
+                        <option value="0">Self</option>
+                        <option value="1">External</option>
+                        <option value="2">Synth</option>
+                        <option value="3">Noise</option>
+                    </select>
+                </div>
+
+                <div class="mix-section">
+                    <div class="mix-knob-wrapper">
+                        <div class="knob big" id="mixKnob" data-param="mix"></div>
+                        <span class="knob-label">MIX</span>
+                    </div>
+                    <div class="mod-slider-wrapper">
+                        <div class="mod-slider" id="modSlider"></div>
+                        <span class="knob-label">MOD</span>
+                    </div>
+                </div>
+
+                <div class="scale-section">
+                    <div class="scale-row">
+                        <select id="keySelect" class="small-dropdown">
+                            <option>C</option><option>C#</option><option>D</option><option selected>D#</option>
+                            <option>E</option><option>F</option><option>F#</option><option>G</option>
+                            <option>G#</option><option>A</option><option>A#</option><option>B</option>
+                        </select>
+                        <select id="scaleType" class="small-dropdown">
+                            <option>Major</option>
+                            <option selected>Minor</option>
+                            <option>Dorian</option>
+                            <option>Phrygian</option>
+                        </select>
+                        <div class="scale-color-indicator"></div>
+                    </div>
+                    <div class="scale-row">
+                        <select id="chordDegree" class="small-dropdown">
+                            <option>i</option><option>ii</option><option>iii</option><option>iv</option>
+                            <option>v</option><option>vi</option><option selected>vii</option>
+                        </select>
+                        <select id="chordType" class="small-dropdown">
+                            <option>triad</option>
+                            <option selected>7th</option>
+                            <option>sus2</option>
+                            <option>sus4</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Panel -->
+            <div class="center-panel">
+                <!-- Band Visualizer -->
+                <div class="band-visualizer">
+                    <div class="zoom-bar">
+                        <div class="zoom-thumb"></div>
+                    </div>
+                    <div class="band-display">
+                        <span class="freq-marker left">80</span>
+                        <canvas id="bandCanvas"></canvas>
+                        <span class="freq-marker right">20.0k</span>
+                    </div>
+                    <div class="freq-axis">
+                        <span>20</span>
+                        <span>20.0k</span>
+                    </div>
+                </div>
+
+                <!-- Vocoder Knobs Row -->
+                <div class="vocoder-knobs">
+                    <div class="knob-group">
+                        <div class="knob medium" id="bandsKnob" data-param="bandCount"></div>
+                        <span class="knob-label">bands</span>
+                    </div>
+                    <div class="knob-group">
+                        <div class="knob medium" id="widthKnob" data-param="bandWidth"></div>
+                        <span class="knob-label">width</span>
+                    </div>
+                    <div class="knob-group">
+                        <div class="knob medium" id="attackKnob" data-param="attack"></div>
+                        <span class="knob-label">attack</span>
+                    </div>
+                    <div class="knob-group">
+                        <div class="knob medium" id="releaseKnob" data-param="release"></div>
+                        <span class="knob-label">release</span>
+                    </div>
+                    <div class="knob-group">
+                        <div class="knob medium" id="gateKnob" data-param="gate"></div>
+                        <span class="knob-label">gate</span>
+                    </div>
+                    <div class="knob-group">
+                        <div class="knob medium" id="depthKnob" data-param="depth"></div>
+                        <span class="knob-label">depth</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="right-panel">
+                <div class="knob-row">
+                    <div class="knob-group">
+                        <div class="knob medium" id="formantKnob" data-param="formantShift"></div>
+                        <span class="knob-label">formant</span>
+                    </div>
+                    <div class="knob-group">
+                        <div class="knob medium" id="harmShiftKnob" data-param="harmShift"></div>
+                        <span class="knob-label">Harm Shift</span>
+                    </div>
+                </div>
+                <div class="knob-row">
+                    <div class="knob-group">
+                        <div class="knob medium" id="noiseKnob" data-param="unvoiced"></div>
+                        <span class="knob-label">noise</span>
+                    </div>
+                    <div class="knob-group hp-blend-group">
+                        <div class="knob medium" id="hpBlendKnob" data-param="hpBlend"></div>
+                        <span class="slope-label">12dB</span>
+                        <span class="knob-label">hp-blend</span>
+                    </div>
+                </div>
+                <select id="noiseMode" class="auto-dropdown">
+                    <option selected>Auto</option>
+                    <option>Manual</option>
+                </select>
+                <div class="knob-group centered">
+                    <div class="knob medium" id="noiseColorKnob" data-param="noiseColor"></div>
+                    <span class="knob-label">noise color</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tone Sculpt Section -->
+        <div class="tone-sculpt">
+            <div class="tone-sculpt-header">
+                <span class="section-title">tone sculpt</span>
+            </div>
+
+            <div class="eq-container">
+                <!-- Left side controls -->
+                <div class="eq-left-controls">
+                    <button class="power-btn active" id="eqPower"></button>
+                </div>
+
+                <!-- EQ Display -->
+                <div class="eq-display">
+                    <div class="eq-labels-top">
+                        <span class="label-complement">COMPLEMENT</span>
+                        <span class="label-sub">SUB</span>
+                    </div>
+                    <canvas id="eqCanvas"></canvas>
+                    <div class="eq-labels-bottom">
+                        <span class="label-clean">CLEAN</span>
+                        <span class="freq-label">100</span>
+                        <span class="freq-label">1k</span>
+                        <span class="freq-label">10k</span>
+                        <span class="label-dry">DRY</span>
+                    </div>
+                </div>
+
+                <!-- Right side controls -->
+                <div class="eq-right-controls">
+                    <button class="complement-btn" id="complementToggle">COMPLEMENT</button>
+                    <div class="eq-param-display">
+                        <span class="param-value">19.9k</span>
+                        <span class="param-value sub">+18.0dB</span>
+                    </div>
+                    <div class="knob-group">
+                        <div class="knob medium" id="freqKnob" data-param="nodeFreq"></div>
+                        <span class="knob-label">freq</span>
+                    </div>
+                    <div class="knob-group">
+                        <div class="knob medium" id="gainKnob" data-param="nodeGain"></div>
+                        <span class="knob-label">gain</span>
+                    </div>
+                    <div class="knob-group">
+                        <div class="knob medium" id="qKnob" data-param="nodeQ"></div>
+                        <span class="knob-label">Q</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="knob.js"></script>
+    <script src="visualizer.js"></script>
+    <script src="bridge.js"></script>
+</body>
+</html>
