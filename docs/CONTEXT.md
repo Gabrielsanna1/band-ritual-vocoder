@@ -68,6 +68,14 @@ A later commit split these into **two Q tables**: `Linked` mode uses Q=40 (the A
 This table is the single most useful thing here — it is ~15 hours of dead ends, priced.
 **Do not re-run these experiments during the rebuild.**
 
+> **Which measurement these figures come from.** The values in this table are from the **float64
+> simulation**, whose baseline was 0.9159 and whose final was **0.9209**. The 0.9138 quoted above is the
+> **float32 plugin**, whose baseline was 0.9131. The two environments differ by about 0.007, so a figure
+> here is only meaningful against the float64 baseline — compare within an environment, never across.
+> This is why `RMS envelope 0.9199` and `2x oversampling 0.9159` read as higher than 0.9138 without
+> being better: the first is 0.001 below the float64 final, the second *is* the float64 baseline.
+> See [`UNCERTAINTY.md`](UNCERTAINTY.md) §2.
+
 | Technique | Cosine | Verdict |
 |---|---|---|
 | Textbook LP envelope (10–100 Hz) | 0.84–0.92 | worse than a plain peak detector |
@@ -99,6 +107,11 @@ This table is the single most useful thing here — it is ~15 hours of dead ends
 
 ## 5. Where to read next
 
+- **What is *not* certain → [`UNCERTAINTY.md`](UNCERTAINTY.md)** — the eight places where the record is
+  thin, extrapolated, or resolved-but-unlabelled, ranked by how much each matters for a rebuild
+- **Filters, in full → [`FILTERS.md`](FILTERS.md)** — every topology tried and rejected for the LINKED
+  filterbank (single biquad, 2/3/4/5-stage cascades, SVF, Butterworth, STFT), the measurement that
+  killed each, the constant-fractional-Q law, and why the analysis filter differs from the carrier
 - Full reverse-engineering trail → `dsp/Ableton Vocoder - Master Findings Log.md`
 - The measured algorithm → `dsp/Ableton Vocoder - Complete Cracked Algorithm.md`
 - Final architecture → `dsp/Band Ritual - Iter 22 Final Architecture 2026-04-12.md`

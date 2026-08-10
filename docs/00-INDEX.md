@@ -8,11 +8,15 @@ notes disagree, **the later one wins**, with one hard exception: anything measur
 `Band Ritual - WAV Clipping Bug Discovery 2026-04-11` was measured on clipped audio and is invalid.
 
 **Read `CONTEXT.md` first** — it's the distilled version. Come here for depth.
+- [`UNCERTAINTY.md`](UNCERTAINTY.md) — what these notes are NOT sure about; read after CONTEXT and FILTERS
 
 ---
 
-## Suggested reading order (the 6 that matter most)
+## Suggested reading order (the 7 that matter most)
 
+0. [`FILTERS.md`](FILTERS.md) — ⭐⭐ **the filterbank decision, start to finish.** Every topology tried
+   and rejected for LINKED mode, with the measurement that killed each one. Synthesised from the notes
+   below and verified against the source.
 1. `dsp/Ableton Vocoder - Complete Cracked Algorithm.md` — the reconstructed algorithm, from 31 recordings
 2. `dsp/Band Ritual - Iter 22 Final Architecture 2026-04-12.md` — the locked constants + everything that failed
 3. `dsp/Band Ritual - WAV Clipping Bug Discovery 2026-04-11.md` — why earlier numbers are void
