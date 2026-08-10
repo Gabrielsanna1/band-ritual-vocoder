@@ -86,9 +86,9 @@ so the model gets the caveats without you having to explain them.
 
 | File | Size | ~Tokens | What's in it |
 |---|---:|---:|---|
-| [`1-BAND-RITUAL-notes-only.md`](bundles/1-BAND-RITUAL-notes-only.md) | 420 KB | ~107k | **← start with this one.** All 59 notes + CONTEXT + FILTERS + UNCERTAINTY + git history. No code. |
-| [`2-BAND-RITUAL-notes-and-code.md`](bundles/2-BAND-RITUAL-notes-and-code.md) | 1.3 MB | ~329k | Bundle 1 + all live C++ source |
-| [`3-BAND-RITUAL-everything.md`](bundles/3-BAND-RITUAL-everything.md) | 2.2 MB | ~568k | Bundle 2 + the ~934 KB of abandoned/dead source |
+| [`1-BAND-RITUAL-notes-only.md`](bundles/1-BAND-RITUAL-notes-only.md) | 436 KB | ~111k | **← start with this one.** All 59 notes + CONTEXT + FILTERS + UNCERTAINTY + git history. No code. |
+| [`2-BAND-RITUAL-notes-and-code.md`](bundles/2-BAND-RITUAL-notes-and-code.md) | 1.3 MB | ~333k | Bundle 1 + all live C++ source |
+| [`3-BAND-RITUAL-everything.md`](bundles/3-BAND-RITUAL-everything.md) | 2.2 MB | ~572k | Bundle 2 + the ~934 KB of abandoned/dead source |
 
 **Which one?** Bundle **1** for almost everything — the notes *are* the valuable part, and it fits in every
 model's context window. Bundle **2** when you want it to read actual implementation. Bundle **3** only if
