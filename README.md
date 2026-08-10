@@ -9,6 +9,17 @@
 > other repo.** Nothing here should be copy-pasted forward. This repo exists purely so you can *read* it
 > and understand what I already learned, so we don't spend months relearning it.
 >
+> ### 🎧 Optional but recommended: listen first (22 min)
+>
+> There's an audio walkthrough of the whole thing — what was decided and why, with the real numbers.
+> **[▶ How Band Ritual was made (22 min, 40 MB)](https://github.com/eqenrico-hub/band-ritual-prototype/releases/download/podcast-v1/how-band-ritual-was-made.mp3)**
+> — click it while logged into GitHub and it plays in the browser, or right-click to save it.
+> It covers the same six things `docs/CONTEXT.md` covers, in the order that makes them make sense:
+> the decision to measure instead of listen, the nine filter topologies and what killed each, the Q
+> law, the two disasters, why the textbook envelope follower lost, and what is still unknown.
+> Every figure in it is a real measurement. It is a release asset rather than a file in the repo, so
+> it doesn't sit in git history — see the [release page](https://github.com/eqenrico-hub/band-ritual-prototype/releases/tag/podcast-v1).
+>
 > **Do these three things, in order:**
 >
 > 1. **Read [`docs/CONTEXT.md`](docs/CONTEXT.md)** — 5 minutes. It's the whole project distilled: what the
