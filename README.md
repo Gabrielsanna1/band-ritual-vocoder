@@ -1,191 +1,115 @@
-# Band Ritual — First Prototype (reference only)
+# Band Ritual — Vocoder Plugin (V0 prototype)
 
-> ## 👋 Gabriel — start here
->
-> **What this is:** the first version of Band Ritual, which I built between March and June 2026.
-> It works, and it hit its goal. It is also messy, because I wrote it fast while figuring things out.
->
-> **What this is NOT:** the thing we're building. **We are rebuilding from scratch, step by step, in the
-> other repo.** Nothing here should be copy-pasted forward. This repo exists purely so you can *read* it
-> and understand what I already learned, so we don't spend months relearning it.
->
-> ### 🎧 Optional but recommended: listen first (22 min)
->
-> There's an audio walkthrough of the whole thing — what was decided and why, with the real numbers.
-> **[▶ How Band Ritual was made (22 min, 40 MB)](https://github.com/eqenrico-hub/band-ritual-prototype/releases/download/podcast-v1/how-band-ritual-was-made.mp3)**
-> — click it while logged into GitHub and it plays in the browser, or right-click to save it.
-> It covers the same six things `docs/CONTEXT.md` covers, in the order that makes them make sense:
-> the decision to measure instead of listen, the nine filter topologies and what killed each, the Q
-> law, the two disasters, why the textbook envelope follower lost, and what is still unknown.
-> Every figure in it is a real measurement. It is a release asset rather than a file in the repo, so
-> it doesn't sit in git history — see the [release page](https://github.com/eqenrico-hub/band-ritual-prototype/releases/tag/podcast-v1).
->
-> **Do these three things, in order:**
->
-> 1. **Read [`docs/CONTEXT.md`](docs/CONTEXT.md)** — 5 minutes. It's the whole project distilled: what the
->    plugin does, the algorithm I reverse-engineered out of Ableton, the exact measured constants, and a
->    table of everything I tried that **didn't** work.
->    Then **[`docs/FILTERS.md`](docs/FILTERS.md)** — every filter topology I tried for the band
->    filterbank, which ones I rejected and the measurement that killed each one, and why LINKED
->    (the default mode, the one where I matched Ableton) ended up as a 4-stage cascaded RBJ bandpass.
-> 2. **Skim the [trust table](#trust-table--read-this-before-believing-any-file) below** before opening any
->    C++. Roughly half the files in `Source/` are dead experiments I never deleted. The table says which is which.
-> 3. **Clone it and point an AI agent at it** (see below). That's the fastest way in.
->
-> **The notes matter more than the code.** `docs/` has all 59 development notes I wrote while building this, plus CONTEXT, FILTERS and UNCERTAINTY on top.
-> The code only tells you *what* I did; the notes tell you *why*, and what I ruled out. That second part is
-> the expensive part — it's ~3 months of measurements.
->
-> Anything unclear, ask me. — Enrico
+**Band Ritual** is a vocoder audio plugin (C++ / JUCE, VST3 & AU) built by Ritual Audio Labs. The core
+of the project was **reverse-engineering Ableton Live's stock Vocoder** to a *measurable* match, then
+building a plugin around that engine with its own character modes, preset system and custom GUI.
+
+This repository is the first working prototype (V0): source code, the full development record, and
+GUI renders.
 
 ---
 
-## What the project actually was
+## Highlights
 
-Band Ritual is a **vocoder plugin** (JUCE, VST3/AU). The goal wasn't "make a vocoder" — it was to
-**reverse-engineer Ableton Live's stock Vocoder** until the output matched measurably, then build a
-plugin around that engine with its own character mode and GUI.
-
-"Matched measurably" means a number: **cosine similarity** between my output and Ableton's, on the same
-input and settings. It went from 0.45 → **0.927 average across 5 inputs**. That metric drove every
-decision for three months. Full story in [`docs/CONTEXT.md`](docs/CONTEXT.md).
-
----
-
-## How to use this with an AI — two ways
-
-**Option A — clone it and use a coding agent** (Claude Code, Cursor, Copilot). Best option: the agent
-can grep, follow references, and open files on demand.
-
-**Option B — upload one file to any chatbot** (Gemini, ChatGPT, Claude, Mistral, DeepSeek…). No install,
-no git. See [the bundles section](#option-b--one-file-you-can-upload-to-any-chatbot) below.
+- **Matched Ableton's Vocoder to 0.927 cosine similarity** (average over 5 test inputs), up from 0.45
+  at the start. Cosine similarity between the plugin's output and Ableton's, same input and same
+  settings, was the metric behind every design decision.
+- **Data-driven DSP.** Filter topologies, Q laws, envelope followers and gain curves were chosen by
+  rendering both engines and measuring the result, not by ear. This ruled out more than a dozen
+  textbook techniques that measured worse.
+- **Recovered the algorithm** behind Ableton's vocoder: cascaded RBJ bandpass filterbanks, a
+  full-wave peak-detector envelope with `e^0.75` compression, and a constant-fractional-Q law
+  `Q ≈ N / (n_octaves × BW)`, plus measured depth and gain constants.
+- **Shipped as a full product prototype**: three processing modes, multiple carrier sources, presets,
+  a filmstrip-rendered skeuomorphic GUI designed in Blender, and licensing integration.
 
 ---
 
-### Option A — clone it and use a coding agent
-
-```bash
-gh repo clone eqenrico-hub/band-ritual-prototype
-cd band-ritual-prototype
-claude          # or cursor, or whatever you use
-```
-
-Then ask it things like:
-
-- *"Read docs/CONTEXT.md, then explain how the carrier filter works and why it's 4 cascaded stages."*
-- *"What was tried for the envelope follower, and what won?"*
-- *"List every dead end that was tested and rejected, so I don't repeat them."*
-- *"How does depth above 100% behave, and where did that formula come from?"*
-- *"Walk me through PluginProcessor.cpp — what are the main stages of the audio path?"*
-
-Because the code and the reasoning sit in the same repo, the agent can answer **why**, not just **what**.
-Code on its own can't do that.
-
-⚠️ **One warning when using an agent here:** the notes were written over 3 months and contradict each
-other, because my understanding kept changing. **Later notes beat earlier ones**, and anything measured
-before `docs/dsp/Band Ritual - WAV Clipping Bug Discovery 2026-04-11.md` was measured on clipped audio
-and is simply wrong. Tell your agent this, or it will quote outdated numbers with total confidence.
-
----
-
-### Option B — one file you can upload to any chatbot
-
-If you'd rather use Gemini, ChatGPT, or anything else with a file-upload box, the whole project has been
-flattened into **single self-contained `.md` files** in [`bundles/`](bundles/). Download one, drag it into
-the chat, done. Each one already has the "what this is / what to trust" warnings baked into its header,
-so the model gets the caveats without you having to explain them.
-
-| File | Size | ~Tokens | What's in it |
-|---|---:|---:|---|
-| [`1-BAND-RITUAL-notes-only.md`](bundles/1-BAND-RITUAL-notes-only.md) | 436 KB | ~111k | **← start with this one.** All 59 notes + CONTEXT + FILTERS + UNCERTAINTY + git history. No code. |
-| [`2-BAND-RITUAL-notes-and-code.md`](bundles/2-BAND-RITUAL-notes-and-code.md) | 1.3 MB | ~333k | Bundle 1 + all live C++ source |
-| [`3-BAND-RITUAL-everything.md`](bundles/3-BAND-RITUAL-everything.md) | 2.2 MB | ~572k | Bundle 2 + the ~934 KB of abandoned/dead source |
-
-**Which one?** Bundle **1** for almost everything — the notes *are* the valuable part, and it fits in every
-model's context window. Bundle **2** when you want it to read actual implementation. Bundle **3** only if
-you specifically want to study the roads not taken; otherwise it just burns context on code that was
-deleted for good reason.
-
-**Rough fit by model** (check current limits, these move):
-
-- **Gemini** (1M–2M context) — any of the three, including bundle 3
-- **Claude** (200k–1M) — bundle 1 comfortably; bundle 2 on the larger-context models
-- **ChatGPT** — bundle 1 comfortably; bundle 2 may need the file-upload/retrieval path rather than one paste
-
-**To download a single file from GitHub:** open it, then use the download (⤓) button in the file toolbar.
-Don't copy from the rendered page — you'll lose the formatting.
-
-A good first prompt:
-
-> This is the complete development record of a vocoder plugin called Band Ritual, which
-> reverse-engineered Ableton Live's stock Vocoder. Read all of it, then summarise the final
-> architecture and list everything that was tried and rejected.
-
-**Want literally everything instead — images, renders, moodboards, the lot?** Use GitHub's own
-**Code → Download ZIP** on the repo homepage. That gives you all 75 MB. Be warned it's mostly `.pptx`
-moodboards and PNG assets that no chatbot can read — it's an archive, not something to upload to an AI.
-For feeding a model, the `.md` bundles above are strictly better.
-
-*The bundles are generated, not hand-written. If the notes or code ever change, run
-`bash bundles/make-bundles.sh` from the repo root to rebuild all three.*
-
----
-
-## Layout
+## The DSP engine
 
 ```
-Source/              the prototype C++ (JUCE). See trust table below.
+For each band i:
+  1. analysis  = cascaded_bandpass(modulator, fc[i], Qa)   // 3 stages, RBJ BPF2 (6th order)
+  2. envelope  = peak_detect(|analysis|)                    // full-wave rectify, peak follower
+  3. envelope  = envelope ^ 0.75                            // slight compression
+  4. carrier_f = cascaded_bandpass(carrier, fc[i], Qc)      // 4 stages, RBJ BPF2 (8th order)
+  5. band_out  = carrier_f * envelope * band_gain * depth_factor
+Sum all bands -> output
+```
+
+| Component | Final value | How it was established |
+|---|---|---|
+| Carrier filter | 4-stage cascaded RBJ bandpass | swept 3 / 4 / 5 stages, matched Ableton's measured 47–52 dB/oct skirts |
+| Carrier Q (BW = 10%) | 40 | derived from the Q law, confirmed by a 37–43 sweep |
+| Analysis Q | 0.52 × carrier Q | fine sweep 0.40–0.85 |
+| Envelope follower | simple peak detector | beat LP, RMS and power-detection followers |
+| Envelope compression | `e^0.75` | swept 0.5–1.0 |
+| Depth | floor 0.065, exponent 1.35 above 100% | measured from Ableton depth exports |
+
+**Modes**
+- **Linked**: the Ableton-matched filterbank (Q = 40).
+- **Ritual / Split**: a wider (Q = 6), more characterful house sound, kept as a separate Q table.
+
+**Carrier sources**: internal (self), external sidechain, noise, saw, square, sine and pitch-tracked.
+
+### Approaches evaluated and rejected (measured)
+
+| Technique | Result |
+|---|---|
+| Textbook low-pass envelope (10–100 Hz) | 0.84–0.92, worse than a plain peak detector |
+| RMS / power (y²) detection | 0.920 / 0.811 |
+| Carrier / envelope normalization | 0.733 / 0.855 |
+| Per-band spectral tilt | 0.44, actively harmful because constant-Q already handles tilt |
+| 2× oversampling | no improvement |
+| SVF, Butterworth and single-biquad filterbanks | structurally unable to reproduce Ableton's skirt slope |
+| STFT / FFT vocoder (2048 / 512, 75% overlap) | prototyped and abandoned in favour of the IIR path |
+
+### Engineering lessons
+
+- A single wrong constant (a Q = 6 regression) caused symptoms that looked like deep algorithmic
+  problems. **Validating the basic parameters first** became a core rule.
+- 16-bit WAV clipping had been quietly corrupting the measurement pipeline. Catching it led to
+  re-validating every earlier result.
+- The target turned out to be simple. Frequency-dependent "corrections" made the match worse, not better.
+
+---
+
+## Tech stack
+
+- **C++17, JUCE**, CMake: VST3 and AU plugin formats
+- **Python**: offline validation suite (rendering, cosine-similarity scoring against Ableton exports)
+- **Blender + Photoshop**: GUI chassis and knob renders, exported as filmstrips
+- Experimental **WebView (HTML/CSS/JS) GUI** and **STFT** engine branches (kept for reference)
+
+---
+
+## Repository layout
+
+```
+Source/                 plugin source (JUCE)
+  PluginProcessor.*     DSP engine: filterbank, envelopes, modes, parameters
+  PluginEditor.*        GUI
+  CarrierGenerator.*    carrier sources
+  PresetManager.h       presets
+  FilmstripLookAndFeel.* filmstrip knob rendering
+  STFTVocoder.*         experimental FFT engine (not wired in)
+  webui/                experimental HTML GUI (disabled)
+  *_backup.*            historical snapshots of earlier iterations
 docs/
-  CONTEXT.md         START HERE — the cracked algorithm + what was learned
-  FILTERS.md         every filter topology tried, and the measurement that killed each
-  UNCERTAINTY.md     what is NOT certain, ranked — read before trusting a constant
-  00-INDEX.md        map of all 59 notes by topic
-  dsp/               reverse-engineering logs, Ableton measurements, iteration history
-  gui/               layout spec, Blender/chassis sessions, moodboard assets
-  process/           checklists, build/install gotchas, validation spec
-  PROTOTYPE_GIT_HISTORY.md    commit log of the original working repo
-reference-renders/   what the thing looked like
+  CONTEXT.md            project overview, final algorithm, lessons learned
+  FILTERS.md            every filter topology tried and the measurement that ruled each out
+  UNCERTAINTY.md        known open questions, ranked
+  dsp/  gui/  process/  59 development notes: measurements, iterations, GUI and build process
+bundles/                the whole record flattened into single Markdown files
+reference-renders/      GUI chassis and knob renders
 CMakeLists.txt
 ```
 
-`build/` is intentionally excluded (it was 1.4 GB). The original repo's `.git` was 316 MB and was
-**not** carried over — its history is preserved as readable text in `docs/PROTOTYPE_GIT_HISTORY.md`.
+Good places to start: [`docs/CONTEXT.md`](docs/CONTEXT.md) and [`docs/FILTERS.md`](docs/FILTERS.md).
 
 ---
 
-## Trust table — read this before believing any file
+## Status
 
-The prototype has several parallel attempts sitting side by side. An agent reading cold **cannot
-tell them apart** and will happily quote abandoned code as if it were live. So:
-
-| File | Lines | Status |
-|---|---:|---|
-| `PluginProcessor.cpp` / `.h` | 5864 / 708 | ✅ **CURRENT** — the shipped DSP. This is the real one. |
-| `PluginEditor.cpp` / `.h` | 4300 / 7444 | ✅ **CURRENT** — the shipped GUI. |
-| `CarrierGenerator.cpp` / `.h` | 296 / 93 | ✅ CURRENT — carrier modes (self/external/noise/saw/square/sine/pitch-track) |
-| `PresetManager.h` | 302 | ✅ CURRENT |
-| `FilmstripLookAndFeel.cpp` / `.h` | 286 / 119 | ✅ CURRENT — filmstrip knob rendering |
-| `LicenseManager.cpp` / `.h` | 972 / 114 | ✅ CURRENT — Gumroad licensing. Irrelevant to the rebuild. |
-| `STFTVocoder.cpp` / `.h` | 498 / 147 | ⚠️ **EXPERIMENT, NOT WIRED IN** — FFT vocoder attempt (2048/512, 75% overlap). Abandoned; the IIR path won. See `docs/dsp/Band Ritual - STFT Integration Attempt 2026-04-10.md`. |
-| `WebViewEditor.cpp` / `.h` + `Source/webui/` | 259 / 59 | ⚠️ **DISABLED** — HTML/CSS GUI experiment. `PluginProcessor.cpp` has `#define USE_WEBVIEW_GUI 0`, so this code never runs. |
-| `PluginProcessor_stft_backup.cpp` / `.h` | 4364 / 592 | ❌ **DEAD** — snapshot from the STFT era |
-| `PluginEditor_stft_backup.cpp` / `.h` | 4169 / 7063 | ❌ **DEAD** |
-| `PluginEditor_backup.cpp` / `.h` | 731 / 1757 | ❌ **DEAD** — older GUI |
-| `PluginProcessor_v1_calibrated_backup.cpp` | 4641 | ❌ **DEAD** — but historically interesting: the first calibrated match |
-
-**Known weaknesses, stated plainly** (these are the reasons for the rebuild):
-
-- `PluginProcessor.cpp` at 5864 lines and `PluginEditor.h` at 7444 lines are monoliths. DSP, parameter
-  handling, and state are not separated.
-- ~21k of the ~45k lines are dead backup files.
-- No test suite. Validation was done externally with Python scripts against Ableton exports
-  (see `docs/process/Band Ritual - Validation Suite Spec.md`).
-- GUI layout is hardcoded, not driven by a layout system.
-
----
-
-## Note on credentials
-
-`LicenseManager.cpp` contains a Gumroad **product ID** and a Cloudflare Worker URL for trial checks.
-Neither is a private secret — both ship inside the compiled binary anyway. There are no API keys,
-tokens, or private keys in this repo. It is private regardless.
+V0 is a working prototype that reached its goal. A cleaner, test-driven rebuild is in progress. It
+reuses the measured constants and the validation method, and replaces the monolithic code structure.
